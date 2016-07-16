@@ -29,14 +29,14 @@ import twitter4j.conf.ConfigurationBuilder;
 
 public final class ISIS {       
 
-	private static final String username = "isis_twitter";
-	private static final String password = "cipstweets";
+	private static final String username = "anish";
+	private static final String password = "!ani*!";
 	private static Session session;
 
-	private static final String access_token = "1887750518-8AaNFMQ5rJGIF3Ol9R9HwkQqh7tRgp5SOFLYlWp";
-	private static final String access_token_secret = "zZJlP3oXJHoopPUEOEBXb2CXqnaSjUFPyAJPlfUADMH2y";
-	private static final String consumer_key = "5es2IDWv0YDmeqYgDWt8dnlow";
-	private static final String consumer_secret = "NarkLyHm0QNGQKps5NuIuYUAsNLJj2AZq3KfaDZ1OLeXNv8P6j";
+	private static final String access_token = "300823393-jj7LVz6tmy4ClahTWYaTxAOl0QjzhOgf2YAjbhbv";
+	private static final String access_token_secret = "AmmE4m68dikw4UsH8KoFi59ZpoBiBRHa5NOhzCDox5iXV";
+	private static final String consumer_key = "2KUlcYk0wvS3Wzyfa44tbuxnC";
+	private static final String consumer_secret = "mK5SAyeCJxvJz9BObJ6o1Nol6i5Xiuod3p7k3pKZplPLUtJYjQ";
 
 	public static void main(String[] args) throws TwitterException, IOException, SQLException { 
 
@@ -46,11 +46,12 @@ public final class ISIS {
 
 			@Override    	
 			public void onStatus(Status status) {
-//				System.out.println("@" + status.getUser().getScreenName() + " : "  + status.getText()); 
+				System.out.println("@" + status.getUser().getScreenName() + " : "  + status.getText()); 
 				try
 				{
+					System.out.println("@" + status.getUser().getScreenName() + " : "  + status.getText());
 					insertTweetsIntoDB(status);
-					insertUserIntoDB(status);
+//					insertUserIntoDB(status);
 				}
 				catch(Exception e)
 				{
@@ -94,6 +95,7 @@ public final class ISIS {
 		
 		FilterQuery fq = new FilterQuery();
 		fq.track(IKeywords.words);
+		fq.locations(IKeywords.location);
 		
 		twitterStream.filter(fq);
 	}
