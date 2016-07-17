@@ -1,10 +1,15 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Map;
+import java.util.Scanner;
 
 import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.Cluster;
@@ -37,21 +42,26 @@ public final class ISIS {
 	private static final String access_token_secret = "AmmE4m68dikw4UsH8KoFi59ZpoBiBRHa5NOhzCDox5iXV";
 	private static final String consumer_key = "2KUlcYk0wvS3Wzyfa44tbuxnC";
 	private static final String consumer_secret = "mK5SAyeCJxvJz9BObJ6o1Nol6i5Xiuod3p7k3pKZplPLUtJYjQ";
+	
+	private static Map<String,City> geoMap = new HashMap<String,City>();
 
 	public static void main(String[] args) throws TwitterException, IOException, SQLException { 
-
+		initLocations();
+		
 		connectToCluster();
 
 		StatusListener listener = new StatusListener() {
 
 			@Override    	
 			public void onStatus(Status status) {
-				System.out.println("@" + status.getUser().getScreenName() + " : "  + status.getText()); 
+//				System.out.println("@" + status.getUser().getScreenName() + " : "  + status.getText()); 
 				try
 				{
-					System.out.println("@" + status.getUser().getScreenName() + " : "  + status.getText());
-					insertTweetsIntoDB(status);
-//					insertUserIntoDB(status);
+					if(doesBelongToNYC(status)){
+//						System.out.println("@" + status.getUser().getScreenName() + " : "  + status.getText());
+						insertTweetsIntoDB(status);
+						insertUserIntoDB(status);
+					}
 				}
 				catch(Exception e)
 				{
@@ -95,10 +105,63 @@ public final class ISIS {
 		
 		FilterQuery fq = new FilterQuery();
 		fq.track(IKeywords.words);
-		fq.locations(IKeywords.location);
+//		fq.locations(IKeywords.location);
 		
 		twitterStream.filter(fq);
 	}
+	
+	static double  minLat, maxLat;
+	static double minLong, maxLong;
+
+	private static void initLocations() {
+		File csv = new File("newyorkgeo.csv");
+		try {
+			Scanner sc = new Scanner(csv);
+			sc.nextLine(); // header
+			while(sc.hasNextLine())
+			{
+				String a[] = sc.nextLine().split(",");
+				City city = new City();
+				city.name = a[2].toLowerCase();
+				city.lat = a[0];
+				city.lon = a[1];
+				
+				geoMap.put(city.name, city);
+			}
+			sc.close();
+			
+			minLat = minLong = Float.MAX_VALUE;
+			maxLat = maxLong = 0;
+			
+			for(City city : geoMap.values())
+			{
+				if(Float.parseFloat(city.lat) > maxLat)
+				{
+					maxLat = Double.parseDouble(city.lat);
+				}
+				
+				if(Float.parseFloat(city.lon) > maxLong)
+				{
+					maxLong = Double.parseDouble(city.lon);
+				}
+				
+				if(Float.parseFloat(city.lon) < minLong)
+				{
+					minLong = Double.parseDouble(city.lon);
+				}
+				
+				if(Float.parseFloat(city.lat) < minLat)
+				{
+					minLat = Double.parseDouble(city.lat);
+				}
+			}
+			
+//			System.out.println("Lat - " + minLat + ":" + maxLat + ", Long - " + minLong + ":" + maxLong);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
 
 	private static void connectToCluster() {
 		//Creating Cluster object
@@ -331,6 +394,82 @@ public final class ISIS {
 //			  withheld_in_countries set<text>,
 //			  PRIMARY KEY (uid)
 //			) 
+	private static boolean doesBelongToNYC(Status status)
+	{
+		// Geo
+		if(status.getGeoLocation() != null)
+		{
+//			System.out.println("co_ord:" + status.getGeoLocation().getLatitude() + "," +status.getGeoLocation().getLongitude());
+			double lat = status.getGeoLocation().getLatitude();
+			double lon = status.getGeoLocation().getLongitude();
+			
+			if(minLat <= lat && maxLat >= lat && minLong <= lon && maxLong >= lon)
+			{
+				return true;
+			}
+		}
+		
+		// Place
+		if(status.getPlace() != null)
+		{
+			String place = status.getPlace().getName();
+//			System.out.println("place:" + place);
+			
+			if(geoMap.keySet().contains(place.toLowerCase()))
+				return true;
+			
+			Set<String> placeSplit = new HashSet<String>();
+			placeSplit.add(place);
+			addToSet(placeSplit, place.split(","));
+			addToSet(placeSplit, place.split(" "));
+			
+			for(String placeStr : placeSplit)
+			{
+				for(String c : IKeywords.cities)
+				{
+					if(c.equalsIgnoreCase(placeStr))
+					{
+						return true;
+					}
+				}
+			}
+
+			if(status.getPlace().getCountry().equalsIgnoreCase("libya"))
+				return true;
+		}
+		
+		// User location
+		User user = status.getUser();
+		if(user.getLocation() != null)
+		{
+			String place = user.getLocation();
+			Set<String> placeSplit = new HashSet<String>();
+			placeSplit.add(place);
+			addToSet(placeSplit, place.split(","));
+			addToSet(placeSplit, place.split(" "));
+			
+			for(String placeStr : placeSplit)
+			{
+				for(String c : IKeywords.cities)
+				{
+					if(c.equalsIgnoreCase(placeStr))
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	private static void addToSet(Set<String> set, String[] arr)
+	{
+		for(String place : arr)
+		{
+			set.add(place);
+		}
+	}
+
 	private static void insertUserIntoDB(Status status) {
 		User user = status.getUser();
 		long uid = user.getId();
