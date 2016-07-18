@@ -416,6 +416,29 @@ public interface IKeywords {
 	String[] cities = 
 		{
 				"Manhattan","Brooklyn","Bronx","Queens","Newyorkcity","NewYork","NewJersey","Staten Island","New York City",
-				"New York", "New Jersey"
+				"New York", "New Jersey","NY","NYC","Hudson River",
+				"Wakefield",
+				"Mudhole Closure",
+				"Chautauqua County",
+				"Niagara County",
+				"St Lawrence County",
+				"Clinton County",
+				"Rensselaer County",
+				"Suffolk County",
+				"Buffalo",
+				"Rochester",
+				"Syracuse",
+				"Yonkers",
+				"Albany",
+				"New Rochelle ",
+				"Cheektowaga",
+				"Mount Vernon",
+				"Schenectady",
+				"Utica",
+				"Brentwood",
+				"Tonawanda",
+				"White Plains",
+				"Hempstead",
+				"Levit"
 		};
 }
