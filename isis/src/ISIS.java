@@ -38,10 +38,17 @@ public final class ISIS {
 	private static final String password = "!ani*!";
 	private static Session session;
 
-	private static final String access_token = "300823393-jj7LVz6tmy4ClahTWYaTxAOl0QjzhOgf2YAjbhbv";
-	private static final String access_token_secret = "AmmE4m68dikw4UsH8KoFi59ZpoBiBRHa5NOhzCDox5iXV";
-	private static final String consumer_key = "2KUlcYk0wvS3Wzyfa44tbuxnC";
-	private static final String consumer_secret = "mK5SAyeCJxvJz9BObJ6o1Nol6i5Xiuod3p7k3pKZplPLUtJYjQ";
+//	NYC1
+//	private static final String access_token = "300823393-jj7LVz6tmy4ClahTWYaTxAOl0QjzhOgf2YAjbhbv";
+//	private static final String access_token_secret = "AmmE4m68dikw4UsH8KoFi59ZpoBiBRHa5NOhzCDox5iXV";
+//	private static final String consumer_key = "2KUlcYk0wvS3Wzyfa44tbuxnC";
+//	private static final String consumer_secret = "mK5SAyeCJxvJz9BObJ6o1Nol6i5Xiuod3p7k3pKZplPLUtJYjQ";
+//	
+//	NYC2
+	private static final String access_token = "300823393-fcAB5U4mEduykf0rw3Mkii0pJG29oWy039TqS9vC";
+	private static final String access_token_secret = "RXGVat8NxYTNhyGZc6MIwd6JaF5OkD4MUIeTnKyNfMG6Y";
+	private static final String consumer_key = "NXqOPWTlgf6RbEc0AdDHfuhEb";
+	private static final String consumer_secret = "SnCWoqT66CS3N7aOe6XKNDKa60LMfi645Joj7eryYQIjpYaj40";
 	
 	private static Map<String,City> geoMap = new HashMap<String,City>();
 
@@ -104,7 +111,7 @@ public final class ISIS {
 		twitterStream.addListener(listener);
 		
 		FilterQuery fq = new FilterQuery();
-		fq.track(IKeywords.words);
+		fq.track(IKeywords.words1);
 //		fq.locations(IKeywords.location);
 		
 		twitterStream.filter(fq);
