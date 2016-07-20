@@ -44,12 +44,18 @@ public final class ISIS {
 //	private static final String consumer_key = "2KUlcYk0wvS3Wzyfa44tbuxnC";
 //	private static final String consumer_secret = "mK5SAyeCJxvJz9BObJ6o1Nol6i5Xiuod3p7k3pKZplPLUtJYjQ";
 //	
-//	NYC2
-	private static final String access_token = "300823393-fcAB5U4mEduykf0rw3Mkii0pJG29oWy039TqS9vC";
-	private static final String access_token_secret = "RXGVat8NxYTNhyGZc6MIwd6JaF5OkD4MUIeTnKyNfMG6Y";
-	private static final String consumer_key = "NXqOPWTlgf6RbEc0AdDHfuhEb";
-	private static final String consumer_secret = "SnCWoqT66CS3N7aOe6XKNDKa60LMfi645Joj7eryYQIjpYaj40";
-	
+////	NYC2
+//	private static final String access_token = "300823393-fcAB5U4mEduykf0rw3Mkii0pJG29oWy039TqS9vC";
+//	private static final String access_token_secret = "RXGVat8NxYTNhyGZc6MIwd6JaF5OkD4MUIeTnKyNfMG6Y";
+//	private static final String consumer_key = "NXqOPWTlgf6RbEc0AdDHfuhEb";
+//	private static final String consumer_secret = "SnCWoqT66CS3N7aOe6XKNDKa60LMfi645Joj7eryYQIjpYaj40";
+
+//	NYC3
+	private static final String access_token = "300823393-qlyxsnn1pebjqJd7bnw0tu62KwLdvgtwiTqGKt1U";
+	private static final String access_token_secret = "2UR0yT3cBjO7Ytm1BiDmKAvDJjukrK4B0wxTQONpZEUcp";
+	private static final String consumer_key = "WIotrRZzeYPdC83F3dFHeYChg";
+	private static final String consumer_secret = "fPkvRQP8LRTWnW8axHMp1l4beRUO2828RHlF6t70quAVdjVqBZ";
+
 	private static Map<String,City> geoMap = new HashMap<String,City>();
 
 	public static void main(String[] args) throws TwitterException, IOException, SQLException { 
@@ -111,7 +117,7 @@ public final class ISIS {
 		twitterStream.addListener(listener);
 		
 		FilterQuery fq = new FilterQuery();
-		fq.track(IKeywords.words1);
+		fq.track(IKeywords.words2);
 //		fq.locations(IKeywords.location);
 		
 		twitterStream.filter(fq);
@@ -128,7 +134,10 @@ public final class ISIS {
 			while(sc.hasNextLine())
 			{
 				String a[] = sc.nextLine().split(",");
+				
 				City city = new City();
+//				System.out.println(a[2]);
+				
 				city.name = a[2].toLowerCase();
 				city.lat = a[0];
 				city.lon = a[1];
